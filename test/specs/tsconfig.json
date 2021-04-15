@@ -1,0 +1,10 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "strict": true,
+    "target": "es5",
+    "lib": ["es5", "dom", "ES2015.Iterable", "ES2015.Promise"],
+    "types": ["jest", "node"]
+  },
+  "include": ["./**/*.spec.ts"]
+}

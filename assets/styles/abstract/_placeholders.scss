@@ -1,0 +1,14 @@
+%center-inline-flex {
+  align-items: center;
+  display: inline-flex;
+  justify-content: center;
+  vertical-align: middle;
+}
+
+%reset-apareance {
+  /* stylelint-disable property-no-vendor-prefix */
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  /* stylelint-enable property-no-vendor-prefix */
+  appearance: none;
+}

@@ -1,0 +1,324 @@
+/* ---
+title:   Buttons
+section: Base CSS
+---
+Hacer botones es un calvario, así que decidi tomar prestado el código de alguien
+más inteligente y adaptarlo a nuestro uso de trabajo.
+Ese alguien es Eric Bailey
+Muchas gracias Eric
+
+https://cantina.co/building-a-better-button-in-css/
+
+```example:html
+<button class="btn">Click</button>
+<a class="btn" href="/some-page">Some Page</a>
+```
+*/
+
+// Color variables
+@import '../abstract/variables';
+
+$color-map: (
+  'primary': (
+    'background': $teal-800,
+    'front': $gray-100,
+  ),
+  'secondary': (
+    'background': $teal-600,
+    'front': $gray-100,
+  ),
+  'tertiary': (
+    'background': $purple-700,
+    'front': $gray-800,
+  ),
+);
+// Transform variables
+$button-bounce: scale(0.98);
+
+// Transition variables
+$button-transition-duration: 300ms;
+$button-cycle-busy: 2s ease-in-out infinite;
+
+// Border variables
+$button-border-width-thin: 2px;
+$button-border-width-thick: 3px;
+
+// Animation
+@keyframes button-busy {
+  0% {
+    opacity: 0.2;
+  }
+
+  50% {
+    opacity: 0.4;
+  }
+
+  100% {
+    opacity: 0.2;
+  }
+}
+
+/////////////////////
+// ELEMENT STYLING //
+/////////////////////
+
+// SVG Icons
+// This controls the default behavior of how icons look when they're declared via the `<use>` tag
+.svg-icon {
+  display: inline-block;
+  fill: currentColor;
+  height: 1em;
+  stroke: currentColor;
+  stroke-width: 0;
+  width: 1em;
+}
+
+// Declared as a class so we can easily apply it to both `<button>` and `<input type="button">`
+.btn {
+  align-items: center;
+  /////////////////////
+  // CORE FORMATTING //
+  /////////////////////
+  background-color: transparent;
+  border: 0;
+  border-radius: theme('borderRadius.default');
+  box-shadow: theme('boxShadow.default');
+  display: inline-flex;
+  font-weight: 600;
+  justify-content: center;
+  line-height: 1;
+  margin-bottom: theme('spacing.2');
+  min-height: theme('height.4');
+  transition: background-color $button-transition-duration,
+    border-color $button-transition-duration,
+    box-shadow ($button-transition-duration / 2); // Focused buttons
+
+  width: 100%; // Large, mobile-friendly touch target
+
+  // States
+  // All states share these core properties
+  &:focus {
+    outline: none; // Make sure every priority has a visually distinct focus style!
+  }
+
+  &--active {
+    background-color: lighten($gray-700, 70%);
+    box-shadow: theme('boxShadow.md');
+  }
+
+  &--icon {
+    /* stylelint-disable selector-no-qualifying-type */
+    .svg-icon,
+    svg[class*='fa-'] {
+      height: 0.8rem;
+      margin-right: 0.2rem;
+      width: 0.8rem;
+    }
+    /* stylelint-enable selector-no-qualifying-type */
+  }
+
+  // Make buttons feel "tappy"
+  &:active {
+    box-shadow: theme('boxShadow.inner');
+    transform: $button-bounce;
+  }
+
+  // Disabled styles use the`!important` qualifier because they are a "fixed" trump state that should not be manipulated until the reason for disabling the element has been satisfied: https://csswizardry.com/2016/05/the-importance-of-important/
+  &[aria-busy='true'] {
+    animation: button-busy $button-cycle-busy !important;
+    cursor: not-allowed !important;
+    pointer-events: none !important;
+
+    &:focus {
+      box-shadow: none !important;
+    }
+
+    &:active,
+    &.btn--active {
+      transform: none !important;
+    }
+  }
+
+  &[disabled] {
+    cursor: not-allowed !important;
+    opacity: 0.3 !important;
+    pointer-events: none !important;
+  }
+
+  // Media Queries
+  @media (min-width: $screen-sm) {
+    margin-left: theme('spacing.1');
+    margin-right: theme('spacing.1');
+    padding-left: theme('spacing.2');
+    padding-right: theme('spacing.2');
+    width: auto; // Smaller buttons on larger screens
+  }
+
+  ////////////////
+  // PRIORITIES //
+  ////////////////
+  // `#{&}` interpolates the ampersand selector, letting you target multiple classes on the same element: https://webdesign.tutsplus.com/tutorials/all-you-ever-need-to-know-about-sass-interpolation--cms-21375
+  @each $theme, $colors in $color-map {
+    $background: map-get(
+      $map: $colors,
+      $key: 'background',
+    );
+    $front: map-get(
+      $map: $colors,
+      $key: 'front',
+    );
+
+    &--#{$theme} {
+      color: $background;
+
+      &.btn--active {
+        background-color: lighten($background, 30%);
+      }
+    }
+
+    &--#{$theme}#{&}--solid {
+      background-color: $background;
+      color: $front;
+
+      // States
+      &:hover {
+        background-color: lighten($background, 7%);
+      }
+
+      &:active,
+      &.btn--active {
+        background-color: darken($background, 7%);
+      }
+
+      &[disabled]:hover {
+        background-color: $background !important;
+      }
+    }
+
+    &--#{$theme}#{&}--hollow {
+      border: $button-border-width-thick solid $background;
+      color: $background;
+
+      // States
+      &:hover {
+        border-color: lighten($background, 7%);
+        color: lighten($background, 7%);
+      }
+
+      &:active,
+      &.btn--active {
+        border-color: darken($background, 7%);
+        color: darken($background, 7%);
+      }
+
+      &[disabled]:hover {
+        border: $button-border-width-thick solid $background;
+        color: $background;
+      }
+    }
+  }
+
+  ///////////
+  // SIZES //
+  ///////////
+  &--small {
+    font-size: theme('fontSize.sm');
+    min-height: theme('height.3');
+    min-width: 6rem;
+  }
+
+  &--small#{&}--hollow {
+    border-width: $button-border-width-thin;
+    // Compensamos con margen inferior el
+    margin-top: $button-border-width-thin * -2;
+  }
+
+  &--small#{&}--icon {
+    .svg-icon,
+    svg[class*='fa-'] {
+      height: 0.8rem;
+      margin-right: 0.2rem;
+      width: 0.8rem;
+    }
+  }
+
+  &--medium {
+    min-height: theme('height.6');
+    min-width: 8rem;
+  }
+
+  &--medium#{&}--hollow {
+    margin-top: $button-border-width-thick * -2;
+    min-height: theme('height.6');
+  }
+
+  &--medium#{&}--icon {
+    .svg-icon,
+    svg[class*='fa-'] {
+      height: 1rem;
+      margin-right: 0.3rem;
+      width: 1rem;
+    }
+  }
+
+  &--large {
+    font-size: theme('fontSize.xl');
+    letter-spacing: 1px;
+    min-height: theme('height.8');
+    min-width: 10rem;
+  }
+
+  &--large#{&}--hollow {
+    margin-top: $button-border-width-thick * -2;
+    min-height: theme('height.8');
+  }
+
+  &--large#{&}--icon {
+    .svg-icon,
+    svg[class*='fa-'] {
+      height: 1.1rem;
+      margin-right: 0.35rem;
+      width: 1.1rem;
+    }
+  }
+
+  ///////////
+  // FILLS //
+  ///////////
+  &--solid,
+  &--hollow {
+    // States
+    &[disabled] {
+      &:active {
+        transform: none !important;
+      }
+    }
+  }
+}
+
+///////////////
+// JERK MODE //
+///////////////
+/* stylelint-disable selector-no-qualifying-type, selector-max-type */
+button a, // This one is for you Isac
+div[class~="btn"],
+p[class~="btn"],
+span[class~="btn"],
+div[class^="btn--"],
+p[class^="btn--"],
+span[class^="btn--"],
+button[href],
+input[type="button"][href] {
+  &::before {
+    background-color: $pink-600;
+    box-shadow: 0 3px 5px 0 rgba(0, 0, 0, 0.75);
+    color: $white;
+    content: 'Please use the correct button syntax!';
+    font-size: 0.9rem;
+    left: 0;
+    padding: 0.5rem 1rem;
+    position: absolute;
+    transform: rotate(-4deg);
+  }
+}
+/* stylelint-enable selector-no-qualifying-type, selector-max-type */
