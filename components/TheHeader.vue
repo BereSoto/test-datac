@@ -1,6 +1,6 @@
 <template>
   <header>
-    <h1>Plantilla de kuntica</h1>
+    <h1></h1>
   </header>
 </template>
 
