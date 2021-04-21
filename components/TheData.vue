@@ -10,11 +10,7 @@
     </div>
     <div>
       <span>Estado</span>
-      <select
-        v-model="selected"
-        class="selection"
-        @click="showData = !showData"
-      >
+      <select v-model="selected" class="selection">
         <option v-for="entidad in entidades" :key="entidad.id">
           {{ entidad.text }}
         </option>
@@ -23,14 +19,30 @@
     <div>
       <span>Municipio</span>
       <select v-model="selected" class="selection">
-        <option v-for="municipio in municipios" :key="municipio.id">
+        <option
+          v-for="municipio in municipios"
+          :key="municipio.id"
+          @click="showData = !showData"
+        >
           {{ municipio.text }}
         </option>
       </select>
     </div>
     <div v-if="showData">
       <div v-if="result" class="content">
-        <p>{{ result.data }}</p>
+        <p>{{ result }}</p>
+      </div>
+      <div>
+        <svg>
+          <circle
+            v-for="(item, index) in result"
+            :key="index"
+            :cx="item[6]"
+            :cy="item[7]"
+            r="10"
+            fill="#9eb0ff"
+          />
+        </svg>
       </div>
     </div>
   </div>
@@ -38,6 +50,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import axios from 'axios'
+/** import * as d3 from 'd3' */
 
 export default Vue.extend({
   name: 'TheData',
@@ -45,12 +58,13 @@ export default Vue.extend({
     return {
       result: null,
       showData: false,
-      crimenes: [{ text: 'Investigación por trafico de menores', value: 'A' }],
-      entidades: [{ text: 'Aguascalientes', value: 'A' }],
-      municipios: [{ text: 'San Pedro Cholula', value: 'A' }],
+      crimenes: [{ text: 'Investigación por trafico de menores', value: '15' }],
+      entidades: [{ text: 'Puebla', value: '21' }],
+      municipios: [{ text: 'San Pedro Cholula', value: '140' }],
     }
   },
-  created() {
+  /** consumo la API y utilizo los headers para poder traer la informacion del crimen, la entidad y municipio */
+  mounted() {
     axios
       .post('https://spotlight-unfpa.datacivica.org/api/v1/timeline', {
         id_crime: 15,
@@ -63,6 +77,7 @@ export default Vue.extend({
       })
   },
 })
+const test = []
 </script>
 <style>
 .selection {
