@@ -52,7 +52,7 @@
     "vue-client-only": "2.0.0",
     "vue-head": "2.2.0",
     "vue-meta": "2.4.0",
-    "vue-router": "3.4.8"
+    "vue-router": "3.6.5"
   },
   "devDependencies": {
     "@babel/core": "7.12.3",
